@@ -182,6 +182,37 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Booking submitted successfully!');
             this.reset();
         });
+        // Restore saved data if available
+        const savedBooking = JSON.parse(localStorage.getItem('bookingFormData'));
+        if (savedBooking) {
+            if (service) service.value = savedBooking.service || '';
+            if (checkin) checkin.value = savedBooking.checkin || '';
+            if (checkout) checkout.value = savedBooking.checkout || '';
+            if (guests) guests.value = savedBooking.guests || '';
+            if (comments) comments.value = savedBooking.comments || '';
+        }
+        // Save data to localStorage on input/change
+        [service, checkin, checkout, guests, comments].forEach(field => {
+            if (field) {
+                field.addEventListener('input', () => {
+                    const bookingData = {
+                        service: service.value,
+                        checkin: checkin.value,
+                        checkout: checkout.value,
+                        guests: guests.value,
+                        comments: comments.value
+                    };
+                    localStorage.setItem('bookingFormData', JSON.stringify(bookingData));
+                });
+            }
+        });
+
+        // On form submit, clear saved data
+        bookingForm.addEventListener('submit', function (e) {
+            // ... your validation code ...
+            localStorage.removeItem('bookingFormData');
+            // ... rest of your submit code ...
+        });
     }
 
     // Registration Form with Real-time Validation
@@ -215,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
-
+        
         // Real-time Email Validation
         const emailInput = document.getElementById('email');
         if (emailInput) {
